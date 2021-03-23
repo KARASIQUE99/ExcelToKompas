@@ -94,11 +94,10 @@ namespace ExcelToKompas
                             count_name.Text = "Quantity";
                         if (columns.ToArray().Contains("Designator"))
                         {
-                            mark_name.Text = "Designator";
+                            add_name.Text = "Designator";
                             user_name.Text = "Designator";
                         }
-                        if (columns.ToArray().Contains("Comment"))
-                            add_name.Text = "Comment";
+
                     }
 
 
@@ -140,6 +139,7 @@ namespace ExcelToKompas
             {
                 info_label.Text = "Ошибка инициализации!";
             }
+            
         }
 
         private void btn_select_dir_in_Click(object sender, EventArgs e)
@@ -214,11 +214,10 @@ namespace ExcelToKompas
                         count_name.Text = "Quantity";
                     if (columns.ToArray().Contains("Designator"))
                     {
-                        mark_name.Text = "Designator";
+                        add_name.Text = "Designator";
                         user_name.Text = "Designator";
                     }
-                    if (columns.ToArray().Contains("Comment"))
-                        add_name.Text = "Comment";
+                   
                 }
 
                 info_label.Text = "";

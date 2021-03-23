@@ -274,39 +274,47 @@ namespace ExcelToKompas
 
         }
 
-        public static string cut(string s)
+
+        public static string prepare(string columnName, string value)
         {
-            StringBuilder sb = new StringBuilder();
-            string[] arr = s.Split(' ');
-            int i = 0;
-            foreach(string e in arr)
+            if(columnName == "Designator")
             {
-                i += e.Length;
-                Console.WriteLine(sb+"\n\n\n\n");
-                sb.Append(e);
-                sb.Append(" ");
-                if(i >= 20)
+                StringBuilder sb = new StringBuilder();
+                string[] arr = value.Replace('\n', ' ').Split(' ');
+                for (int i = 0; i < arr.Length; i++)
+                    if (i % 2 == 0) sb.Append(arr[i] + " ");
+                    else sb.Append(arr[i].Replace(',', ' ').Trim() + "\n");
+
+
+                return sb.ToString().Trim();
+            }
+            else
+            {
+                if(value.Length > 40)
                 {
-                    sb.Append("\n");
-                    i = 0;
+                    StringBuilder sb = new StringBuilder();
+                    string[] arr = value.Split(' ');
+                    int i = 0;
+                    foreach (string e in arr)
+                    {
+                        i += e.Length;
+                        Console.WriteLine(sb + "\n\n\n\n");
+                        sb.Append(e);
+                        sb.Append(" ");
+                        if (i >= 20)
+                        {
+                            sb.Append("\n");
+                            i = 0;
+                        }
+                    }
+
+                    return sb.ToString().Trim();
+                } else
+                {
+                    return value;
                 }
             }
-            
-            return sb.ToString().Trim();
         }
-
-        public static string cutDesignator(string s)
-        {
-            StringBuilder sb = new StringBuilder();
-            string[] arr = s.Replace('\n', ' ').Split(' ');
-            for(int i = 0; i < arr.Length; i++)
-                if(i%2 == 0) sb.Append(arr[i]+" ");
-                else sb.Append(arr[i].Replace(',', ' ').Trim()+"\n");
-            
-
-            return sb.ToString().Trim();
-        }
-
 
         public static List<Row> GetDataFromExcel(Excel._Worksheet workSheet, Dictionary<string, string> names)
         {
@@ -322,48 +330,47 @@ namespace ExcelToKompas
                     
                     if (value != null)
                     {
-             
+                        
                         string columnName = Convert.ToString(workSheet.Cells[1, col].Value);  
-                        if (value.Length > 40 && columnName != names["Обозначение"] && columnName != names["Пользователь"]) value = cut(value);
                         if (names.ContainsKey("Формат"))
                             if (columnName == names["Формат"])
-                                instance.Format = value;
+                                instance.Format = prepare(columnName, value);
                         if (names.ContainsKey("Зона"))
                             if (columnName == names["Зона"])
-                                instance.Zone = value;
+                                instance.Zone = prepare(columnName, value);
                         if (names.ContainsKey("Позиция"))
                             if (columnName == names["Позиция"])
-                                instance.Position = value;
+                                instance.Position = prepare(columnName, value);
                         if (names.ContainsKey("Обозначение"))
                             if (columnName == names["Обозначение"])
-                                instance.Mark = cutDesignator(value);
+                                instance.Mark = prepare(columnName, value);
                         if (names.ContainsKey("Наименование"))
                             if (columnName == names["Наименование"])
-                                instance.Name = value;
+                                instance.Name = prepare(columnName, value);
                         if (names.ContainsKey("Количество"))
                             if (columnName == names["Количество"])
-                                instance.Count = value;
+                                instance.Count = prepare(columnName, value);
                         if (names.ContainsKey("Примечание"))
                             if (columnName == names["Примечание"])
-                                instance.Note = value;
+                                instance.Note = prepare(columnName, value);
                         if (names.ContainsKey("Масса"))
                             if (columnName == names["Масса"])
-                                instance.Mass = value;
+                                instance.Mass = prepare(columnName, value);
                         if (names.ContainsKey("Материал"))
                             if (columnName == names["Материал"])
-                                instance.Material = value;
+                                instance.Material = prepare(columnName, value);
                         if (names.ContainsKey("Пользователь"))
                             if (columnName == names["Пользователь"])
-                                instance.User = cutDesignator(value);
+                                instance.User = prepare(columnName, value);
                         if (names.ContainsKey("Код"))
                             if (columnName == names["Код"])
-                                instance.Code = value;
+                                instance.Code = prepare(columnName, value);
                         if (names.ContainsKey("Изготовитель"))
                             if (columnName == names["Изготовитель"])
-                                instance.Factory = value;
+                                instance.Factory = prepare(columnName, value);
                         if (names.ContainsKey("Тип изделия"))
                             if (columnName == names["Тип изделия"])
-                                instance.Type = value;
+                                instance.Type = prepare(columnName, value);
                     }
                 }
                 if (instance.Name != "") result.Add(instance);
