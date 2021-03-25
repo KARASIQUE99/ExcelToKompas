@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
 using Excel = Microsoft.Office.Interop.Excel;
@@ -206,23 +205,6 @@ namespace ExcelToKompas
 
             workStamp(kompas, iDocumentSpc);
 
-            //ksStamp stamp = iDocumentSpc.GetStamp();
-            //stamp.ksOpenStamp();
-
-            //stamp.ksColumnNumber(1);
-            //ksTextItemParam itemParam = (ksTextItemParam)kompas.GetParamStruct((short)StructType2DEnum.ko_TextItemParam);
-            //itemParam.s = "Плата";
-            //stamp.ksSetStampColumnText(1, itemParam);
-            //stamp.ksSetStampColumnText(110, "Халтуринкий");
-            //stamp.ksSetStampColumnText(111, "Краснов");
-            //stamp.ksSetStampColumnText(114, "Деревенский");
-            //stamp.ksSetStampColumnText(115, "Петров");
-            //stamp.ksSetStampColumnText(9, "ООО \"Кванттелеком\"");
-            //stamp.ksSetStampColumnText(2, "ГРТВ.000000.002");
-            //stamp.ksSetStampColumnText(250, "ГРТВ.000000.001");
-
-            //stamp.ksCloseStamp();
-
             iDocumentSpc.ksSaveDocument(fileName + ".spw");
         }
 
@@ -330,7 +312,6 @@ namespace ExcelToKompas
                     
                     if (value != null)
                     {
-                        
                         string columnName = Convert.ToString(workSheet.Cells[1, col].Value);  
                         if (names.ContainsKey("Формат"))
                             if (columnName == names["Формат"])

@@ -73,6 +73,7 @@ namespace ExcelToKompas
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.listBox1 = new System.Windows.Forms.ListBox();
             this.info_label = new System.Windows.Forms.Label();
+            this.btn_upd = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.multiplier)).BeginInit();
@@ -180,6 +181,7 @@ namespace ExcelToKompas
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btn_upd);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.multiplier);
             this.groupBox1.Controls.Add(this.cb_connect_all);
@@ -532,12 +534,15 @@ namespace ExcelToKompas
             // 
             // listBox1
             // 
+            this.listBox1.AllowDrop = true;
             this.listBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 7.8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.listBox1.FormattingEnabled = true;
             this.listBox1.Location = new System.Drawing.Point(6, 16);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(794, 160);
             this.listBox1.TabIndex = 0;
+            this.listBox1.DragDrop += new System.Windows.Forms.DragEventHandler(this.listBox1_DragDrop);
+            this.listBox1.DragEnter += new System.Windows.Forms.DragEventHandler(this.listBox1_DragEnter);
             // 
             // info_label
             // 
@@ -548,6 +553,16 @@ namespace ExcelToKompas
             this.info_label.Size = new System.Drawing.Size(794, 23);
             this.info_label.TabIndex = 24;
             this.info_label.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // btn_upd
+            // 
+            this.btn_upd.Location = new System.Drawing.Point(6, 79);
+            this.btn_upd.Name = "btn_upd";
+            this.btn_upd.Size = new System.Drawing.Size(159, 23);
+            this.btn_upd.TabIndex = 1;
+            this.btn_upd.Text = "Обновить папку";
+            this.btn_upd.UseVisualStyleBackColor = true;
+            this.btn_upd.Click += new System.EventHandler(this.btn_upd_Click);
             // 
             // Form1
             // 
@@ -622,6 +637,7 @@ namespace ExcelToKompas
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.ListBox listBox1;
         private System.Windows.Forms.Label info_label;
+        private System.Windows.Forms.Button btn_upd;
     }
 }
 

@@ -25,7 +25,66 @@ namespace ExcelToKompas
         public Form1()
         {
             InitializeComponent();
-            InitializeApplications();
+            InitializeApplications(true);
+        }
+
+        public void reload()
+        {
+            listBox1.Items.Clear();
+
+            foreach (string fileName in Directory.GetFiles(inputDirName))
+                if ((fileName.EndsWith(".xlsx") || fileName.EndsWith(".xlsm") || fileName.EndsWith(".xls")) && !fileName.Contains("~"))
+                    listBox1.Items.Add(fileName + ", " + 1);
+
+            if (listBox1.Items.Count > 0)
+            {
+
+                List<string> columns = Utils.getFirstRowAsList(
+                    Utils.getWorksheetByFileName(excelApp,
+                    Utils.getFileNameWithoutCount(
+                        Convert.ToString(listBox1.Items[0]))));
+
+                format_name.Items.Clear();
+                zone_name.Items.Clear();
+                position_name.Items.Clear();
+                mark_name.Items.Clear();
+                name_name.Items.Clear();
+                count_name.Items.Clear();
+                add_name.Items.Clear();
+                mass_name.Items.Clear();
+                material_name.Items.Clear();
+                user_name.Items.Clear();
+                code_name.Items.Clear();
+                manufacturer_name.Items.Clear();
+                subsection_name.Items.Clear();
+
+                format_name.Items.AddRange(columns.ToArray());
+                zone_name.Items.AddRange(columns.ToArray());
+                position_name.Items.AddRange(columns.ToArray());
+                mark_name.Items.AddRange(columns.ToArray());
+                name_name.Items.AddRange(columns.ToArray());
+                count_name.Items.AddRange(columns.ToArray());
+                add_name.Items.AddRange(columns.ToArray());
+                mass_name.Items.AddRange(columns.ToArray());
+                material_name.Items.AddRange(columns.ToArray());
+                user_name.Items.AddRange(columns.ToArray());
+                code_name.Items.AddRange(columns.ToArray());
+                manufacturer_name.Items.AddRange(columns.ToArray());
+                subsection_name.Items.AddRange(columns.ToArray());
+
+                if (columns.ToArray().Contains("1CType"))
+                    subsection_name.Text = "1CType";
+                if (columns.ToArray().Contains("PartNumberFrom1C"))
+                    name_name.Text = "PartNumberFrom1C";
+                if (columns.ToArray().Contains("Quantity"))
+                    count_name.Text = "Quantity";
+                if (columns.ToArray().Contains("Designator"))
+                {
+                    add_name.Text = "Designator";
+                    user_name.Text = "Designator";
+                }
+
+            }
         }
 
         public void loadPaths()
@@ -34,8 +93,6 @@ namespace ExcelToKompas
             {
                 if (File.Exists("paths.txt"))
                 {
-                    listBox1.Items.Clear();
-
                     string[] paths = File.ReadAllLines("paths.txt");
                     inputDirName = paths[0];
                     outputDirName = paths[1];
@@ -46,60 +103,7 @@ namespace ExcelToKompas
                     style_path.Text = paths[2];
                     table_path.Text = paths[3];
 
-                    foreach (string fileName in Directory.GetFiles(inputDirName))
-                        if ((fileName.EndsWith(".xlsx") || fileName.EndsWith(".xlsm")) && !fileName.Contains("~"))
-                            listBox1.Items.Add(fileName + ", " + 1);
-
-                    if (listBox1.Items.Count > 0)
-                    {
-
-                        List<string> columns = Utils.getFirstRowAsList(
-                            Utils.getWorksheetByFileName(excelApp,
-                            Utils.getFileNameWithoutCount(
-                                Convert.ToString(listBox1.Items[0]))));
-
-                        format_name.Items.Clear();
-                        zone_name.Items.Clear();
-                        position_name.Items.Clear();
-                        mark_name.Items.Clear();
-                        name_name.Items.Clear();
-                        count_name.Items.Clear();
-                        add_name.Items.Clear();
-                        mass_name.Items.Clear();
-                        material_name.Items.Clear();
-                        user_name.Items.Clear();
-                        code_name.Items.Clear();
-                        manufacturer_name.Items.Clear();
-                        subsection_name.Items.Clear();
-
-                        format_name.Items.AddRange(columns.ToArray());
-                        zone_name.Items.AddRange(columns.ToArray());
-                        position_name.Items.AddRange(columns.ToArray());
-                        mark_name.Items.AddRange(columns.ToArray());
-                        name_name.Items.AddRange(columns.ToArray());
-                        count_name.Items.AddRange(columns.ToArray());
-                        add_name.Items.AddRange(columns.ToArray());
-                        mass_name.Items.AddRange(columns.ToArray());
-                        material_name.Items.AddRange(columns.ToArray());
-                        user_name.Items.AddRange(columns.ToArray());
-                        code_name.Items.AddRange(columns.ToArray());
-                        manufacturer_name.Items.AddRange(columns.ToArray());
-                        subsection_name.Items.AddRange(columns.ToArray());
-
-                        if (columns.ToArray().Contains("1CType"))
-                            subsection_name.Text = "1CType";
-                        if (columns.ToArray().Contains("PartNumberFrom1C"))
-                            name_name.Text = "PartNumberFrom1C";
-                        if (columns.ToArray().Contains("Quantity"))
-                            count_name.Text = "Quantity";
-                        if (columns.ToArray().Contains("Designator"))
-                        {
-                            add_name.Text = "Designator";
-                            user_name.Text = "Designator";
-                        }
-
-                    }
-
+                    reload();
 
                     table = new List<List<string>>();
                     string[] lines = File.ReadAllLines(paths[3]);
@@ -116,12 +120,15 @@ namespace ExcelToKompas
                 }
             } catch (Exception e)
             {
-                MessageBox.Show(e.Message);
+                MessageBox.Show("Произошла ошибка загрузки путей из файла paths.txt!\n\n" +
+                                "Проверьте правильность путей в файле paths.txt или " +
+                                "проигнорируйте ошибку и укажите пути вручную.\n\n" +
+                                "Текст ошибки: " + e.Message);
                 info_label.Text = "Ошибка загрузки путей из файла paths.txt!";
             }
 }
 
-        public void InitializeApplications()
+        public void InitializeApplications(bool load)
         {
             try
             {
@@ -133,10 +140,14 @@ namespace ExcelToKompas
 
                 excelApp = new Excel.Application();
                 kompas = (KompasObject)Activator.CreateInstance(t);
-                loadPaths();
+                if(load) loadPaths();
             }
             catch (Exception ex)
-            {
+            { 
+                MessageBox.Show("Произошла ошибка инициализации!\n\n" +
+                                "Проверьте работу ПО Компас и ПО Excel, " +
+                                "наличие соответствующих лицензий.\n\n" +
+                                "Текст ошибки: " + ex.Message);
                 info_label.Text = "Ошибка инициализации!";
             }
             
@@ -166,59 +177,7 @@ namespace ExcelToKompas
 
                 if (inputDirName == "") return;
 
-                foreach (string fileName in Directory.GetFiles(inputDirName))
-                    if ((fileName.EndsWith(".xlsx") || fileName.EndsWith(".xlsm")) && !fileName.Contains("~"))
-                        listBox1.Items.Add(fileName + ", " + 1);
-
-                if (listBox1.Items.Count > 0)
-                {
-
-                    List<string> columns = Utils.getFirstRowAsList(
-                        Utils.getWorksheetByFileName(excelApp,
-                        Utils.getFileNameWithoutCount(
-                            Convert.ToString(listBox1.Items[0]))));
-
-                    format_name.Items.Clear();
-                    zone_name.Items.Clear();
-                    position_name.Items.Clear();
-                    mark_name.Items.Clear();
-                    name_name.Items.Clear();
-                    count_name.Items.Clear();
-                    add_name.Items.Clear();
-                    mass_name.Items.Clear();
-                    material_name.Items.Clear();
-                    user_name.Items.Clear();
-                    code_name.Items.Clear();
-                    manufacturer_name.Items.Clear();
-                    subsection_name.Items.Clear();
-
-                    format_name.Items.AddRange(columns.ToArray());
-                    zone_name.Items.AddRange(columns.ToArray());
-                    position_name.Items.AddRange(columns.ToArray());
-                    mark_name.Items.AddRange(columns.ToArray());
-                    name_name.Items.AddRange(columns.ToArray());
-                    count_name.Items.AddRange(columns.ToArray());
-                    add_name.Items.AddRange(columns.ToArray());
-                    mass_name.Items.AddRange(columns.ToArray());
-                    material_name.Items.AddRange(columns.ToArray());
-                    user_name.Items.AddRange(columns.ToArray());
-                    code_name.Items.AddRange(columns.ToArray());
-                    manufacturer_name.Items.AddRange(columns.ToArray());
-                    subsection_name.Items.AddRange(columns.ToArray());
-
-                    if (columns.ToArray().Contains("1CType"))
-                        subsection_name.Text = "1CType";
-                    if (columns.ToArray().Contains("PartNumberFrom1C"))
-                        name_name.Text = "PartNumberFrom1C";
-                    if (columns.ToArray().Contains("Quantity"))
-                        count_name.Text = "Quantity";
-                    if (columns.ToArray().Contains("Designator"))
-                    {
-                        add_name.Text = "Designator";
-                        user_name.Text = "Designator";
-                    }
-                   
-                }
+                reload();
 
                 info_label.Text = "";
             }
@@ -395,7 +354,7 @@ namespace ExcelToKompas
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show("Произошла ошибка в процессе конвертации!\n\nТекст ошибки: " + ex.Message);
                 info_label.Text = "Ошибка в процессе выполнения! Перезагрузите ПО!";
             }
 
@@ -403,7 +362,7 @@ namespace ExcelToKompas
 
             try { kompas.Quit(); } catch (Exception ex) { }
             try { excelApp.Quit(); } catch (Exception ex) { }
-            InitializeApplications();
+            InitializeApplications(false);
         }
 
         private Dictionary<string, string> getColumnNames()
@@ -433,6 +392,43 @@ namespace ExcelToKompas
                 info_label.Text = text;
         }
 
-        
+        private void btn_upd_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                reload();
+            } catch(Exception ex)
+            {
+                info_label.Text = "Ошибка загрузки файлов из папки с исходниками";
+            }
+            
+        }
+
+        private void listBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) e.Effect = DragDropEffects.Copy;
+        }
+
+        private void listBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            if(inputDirName != null && dir_in.Text != "")
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                foreach (string file in files)
+                {
+                    try
+                    {
+                        File.Copy(file, inputDirName + "\\" + Path.GetFileName(file), true);
+                    } catch (Exception ex)
+                    {
+                        info_label.Text = "Ошибка! " + Path.GetFileName(file) + " не был добавлен.";
+                    }
+
+
+                    listBox1.Items.Add(file+", 1");
+                }
+                    
+            }
+        }
     }
 }

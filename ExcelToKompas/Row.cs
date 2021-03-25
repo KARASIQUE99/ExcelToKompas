@@ -1,15 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExcelToKompas
 {
     class CompRow<T> : IComparer<T>
        where T : Row
     {
-
         public int Compare(T x, T y)
         {
             int a = Convert.ToInt32(x.Count);
@@ -21,6 +17,7 @@ namespace ExcelToKompas
             else return 0;
         }
     }
+
     class Row
     {
         public string Unknown { get; set; } = "";
